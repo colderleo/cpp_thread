@@ -1,3 +1,4 @@
-Browse.VC.opendb
-Browse.VC.db
 Debug
+.vscode
+.vs
+*.exe

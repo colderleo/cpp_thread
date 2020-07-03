@@ -9,11 +9,17 @@ using namespace std;
 
 
 class Foo {
+private:
+	int counter = 1;
+	std::condition_variable cv1;
+	std::condition_variable cv2;
+	// 使用lock和unlock手动加锁
+	std::mutex g_mutex;
+
 public:
-	Foo() {
+	Foo() {}
 
-	}
-
+public:
 	void first(function<void()> printFirst) {
 		// 等待直至 main() 发送数据
 		std::unique_lock<std::mutex> lk(g_mutex);
@@ -41,38 +47,33 @@ public:
 		printThird();
 	}
 
-private:
-	int counter = 1;
-	std::condition_variable cv1;
-	std::condition_variable cv2;
-	// 使用lock和unlock手动加锁
-	std::mutex g_mutex;
 };
 
 
 void printFirst() {
-	printf("print first.");
+	printf("print first.\n");
 }
 
 void printSecond() {
-	printf("print second.");
+	printf("print second.\n");
 }
 
 void printThird() {
-	printf("print thrid.");
+	printf("print thrid.\n");
 }
 
 
 int main()
 {
-	thread t1(printFirst);
 	string name;
-	cout << "please input your name:";
-	cin >> name;
-	cout << "hello " << name;
 
 	Foo f;
-
-
+	thread t2(&Foo::second, &f, printSecond);
+	this_thread::sleep_for(chrono::seconds(3));
+	thread t1(&Foo::first, &f, printFirst);
+	thread t3(&Foo::third, &f, printThird);
+	t2.join();
+	t1.join();
+	t3.join();
 }
 
