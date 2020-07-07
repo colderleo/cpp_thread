@@ -11,7 +11,7 @@ public:
 	}
 };
 
-int rename_main() {
+int rename2_main() {
 	X x;
 
 	//方法一：传入类对象的指针。
@@ -22,6 +22,7 @@ int rename_main() {
 	auto fun_x_print = bind(&X::printSomething, &x, placeholders::_1);
 	thread t2(fun_x_print, "bbb");
 	t2.join();
+	return 0;
 }
 
 

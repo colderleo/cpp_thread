@@ -11,8 +11,7 @@ using namespace std;
 class Foo {
 private:
 	int counter = 1;
-	std::condition_variable cv1;
-	std::condition_variable cv2;
+	std::condition_variable cv1, cv2;
 	// 使用lock和unlock手动加锁
 	std::mutex g_mutex;
 
@@ -38,7 +37,6 @@ public:
 	}
 
 	void third() {
-
 		std::unique_lock<std::mutex> lk(g_mutex);
 		cv2.wait(lk, [this]() {return counter == 3; });
 		printf("print thrid.\n");
@@ -58,8 +56,9 @@ int rename_main()
 	this_thread::sleep_for(chrono::seconds(1));
 	thread t3(&Foo::third, &f);
 
-	t2.join();
 	t1.join();
+	t2.join();
 	t3.join();
+	return 0;
 }
 
