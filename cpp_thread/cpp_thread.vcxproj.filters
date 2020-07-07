@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cpp_thread.cpp">
+    <ClCompile Include="thread_bind_member_fun.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="thread_bind_member_fun.cpp">
+    <ClCompile Include="print_in_order.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
