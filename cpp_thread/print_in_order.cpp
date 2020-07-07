@@ -47,7 +47,7 @@ public:
 };
 
 
-int main()
+int rename_main()
 {
 	Foo f;
 	thread t2(&Foo::second, &f);
