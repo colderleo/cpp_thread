@@ -22,7 +22,7 @@ public:
 public:
 	void first() {
 		// 等待直至 main() 发送数据
-		//std::unique_lock<std::mutex> lk(g_mutex);
+		std::unique_lock<std::mutex> lk(g_mutex);
 		printf("print first.\n");
 		// 通知前完成手动解锁，以避免等待线程才被唤醒就阻塞（细节见 notify_one ）
 		counter++;
@@ -46,42 +46,20 @@ public:
 
 };
 
-mutex mutex1;
-
-void test1() {
-	unique_lock<mutex> lk(mutex1);
-	for (int i = 0; i < 5; ++i) {
-		this_thread::sleep_for(chrono::seconds(1));
-		printf("%d\n", i);
-	}
-}
-
-void test2() {
-	unique_lock<mutex> lk(mutex1);
-	
-	for (int i = 0; i < 5; ++i) {
-		this_thread::sleep_for(chrono::seconds(1));
-		printf("%d\n", i);
-	}
-}
-
 
 int main()
 {
-	thread t1(test1);
-	thread t2(test1);
-	t1.join();
-	t2.join();
-	return 0;
+	Foo f;
+	thread t2(&Foo::second, &f);
 
-	//Foo f;
-	//thread t3(&Foo::third, &f);
-	//this_thread::sleep_for(chrono::seconds(1));
-	//thread t2(&Foo::second, &f);
-	//this_thread::sleep_for(chrono::seconds(1));
-	//thread t1(&Foo::first, &f);
-	//t2.join();
-	//t1.join();
-	//t3.join();
+	this_thread::sleep_for(chrono::seconds(1));
+	thread t1(&Foo::first, &f);
+
+	this_thread::sleep_for(chrono::seconds(1));
+	thread t3(&Foo::third, &f);
+
+	t2.join();
+	t1.join();
+	t3.join();
 }
 
