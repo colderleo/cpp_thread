@@ -45,7 +45,7 @@ public:
 };
 
 
-int rename_main()
+int print_in_order_main()
 {
 	Foo f;
 	thread t2(&Foo::second, &f);

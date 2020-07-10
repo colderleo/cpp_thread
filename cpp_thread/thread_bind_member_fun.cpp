@@ -11,7 +11,7 @@ public:
 	}
 };
 
-int rename2_main() {
+int thread_bind_member_fun_main() {
 	X x;
 
 	//方法一：传入类对象的指针。

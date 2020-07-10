@@ -152,8 +152,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="condition_variable_produce.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="print_in_order.cpp" />
+    <ClCompile Include="test_cv_defer_lock.hpp" />
     <ClCompile Include="thread_bind_member_fun.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
