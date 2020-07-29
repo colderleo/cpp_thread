@@ -26,8 +26,8 @@ void consumer(int thread_index) {
 		}
 		cargo--;
 		cout <<"thread " << thread_index << " consume 1 goods, current goods: " << cargo << endl;
-		lck.unlock(); //release lock to let other thread run.
 		cout << thread_index << " release lock" <<endl;
+		lck.unlock(); //release lock to let other thread run.
 		if (!cargo)
 			cv_producer.notify_one();
 		else
@@ -40,9 +40,14 @@ void consumer(int thread_index) {
 void deamon() {
 	// in case all threads are sleep and notify is ignored, periodly notify to wake up.
 	while (!consumer_exit) {
+	//for(int i=0; i<5; ++i){
 		this_thread::sleep_for(chrono::seconds(3));
-		cv_consumer.notify_one();
-		cv_producer.notify_one();
+		if (cargo > 0) {
+			cv_consumer.notify_one();
+		}
+		else {
+			cv_producer.notify_one();
+		}
 		cout << "current goods : " << cargo << endl;
 		if (g_mutex.try_lock()) {
 			cout << "mutex is avaliable" << endl;
@@ -58,6 +63,7 @@ void deamon() {
 }
 
 int conditon_variable_produce_main() {
+//int main() {
 	vector<thread> vec;
 
 	thread t_deamon = thread(deamon);
@@ -73,14 +79,15 @@ int conditon_variable_produce_main() {
 		cout << "main get lock" << endl;
 		cargo += 5;
 		cout << "produce goods " << (i+1)*5 <<"  current goods: "<< cargo << endl;
-		lck.unlock();
 		cout << "main release lock" << endl;
+		lck.unlock();
 		cv_consumer.notify_one();
-		this_thread::sleep_for(chrono::milliseconds(rand() % 2000)); //simulate producing.
+		this_thread::sleep_for(chrono::milliseconds(rand() % 1000)); //simulate producing.
 	}
 
-	//unique_lock<mutex> lck(g_mutex, defer_lock);
-	//cv_producer.wait(lck, []() {return (cargo == 0); });//这样写wait会lock，不知道为啥。然后就死在这里了。
+	unique_lock<mutex> lck(g_mutex, defer_lock);
+	cv_producer.wait(lck, []() {cout<<"main end wait. "<<endl;  return (cargo == 0); });//这样写wait会获得锁并lock，不知道为啥。上面cargo+=5, 死锁的的时候cargo=1然后就死在这里了。
+	cout << "main end get lock" << endl;
 	while (cargo > 0) {
 		this_thread::sleep_for(chrono::seconds(1));
 	}
